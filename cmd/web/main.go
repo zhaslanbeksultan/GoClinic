@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 func productsHandler(w http.ResponseWriter, r *http.Request) {
