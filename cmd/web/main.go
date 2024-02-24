@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// owfn
 func productsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
