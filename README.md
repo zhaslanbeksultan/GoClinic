@@ -1,38 +1,38 @@
 # GoClinic Project  
 ## Restaurants REST API  
-POST /menus  
-GET /menus/:id  
-PUT /menus/:id  
-DELETE /menus/:id  
+&nbsp;POST /menus  
+&nbsp;GET /menus/:id  
+&nbsp;PUT /menus/:id  
+&nbsp;DELETE /menus/:id  
 
 ## DB Structure  
 Table doctors {  
-  id bigserial [primary key]  
-  created_at timestamp  
-  updated_at timestamp  
-  first_name text  
-  last_name text  
-  speciality text  
-  phone text  
-} 
+&nbsp;&nbsp;&nbsp;&nbsp;    id bigserial [primary key]  
+&nbsp;&nbsp;&nbsp;&nbsp;    updated_at timestamp      created_at timestamp  
+&nbsp;&nbsp;&nbsp;&nbsp;     updated_at timestamp  
+&nbsp;&nbsp;&nbsp;&nbsp;     first_name text  
+&nbsp;&nbsp;&nbsp;&nbsp;    last_name text  
+&nbsp;&nbsp;&nbsp;&nbsp;     speciality text  
+&nbsp;&nbsp;&nbsp;&nbsp;     phone text  
+&nbsp;    } 
 
 Table patients {  
-  id bigserial [primary key]  
-  created_at timestamp  
-  updated_at timestamp  
-  first_name text  
-  last_name text  
-  phone text  
-}  
+&nbsp;&nbsp;&nbsp;&nbsp;     id bigserial [primary key]  
+&nbsp;&nbsp;&nbsp;&nbsp;     created_at timestamp  
+&nbsp;&nbsp;&nbsp;&nbsp;     updated_at timestamp  
+&nbsp;&nbsp;&nbsp;&nbsp;     first_name text  
+&nbsp;&nbsp;&nbsp;&nbsp;     last_name text  
+&nbsp;&nbsp;&nbsp;&nbsp;     phone text  
+&nbsp;    }  
 
 // many-to-many  
 Table appointments {  
-  id bigserial [primary key]  
-  created_at timestamp  
-  updated_at timestamp  
-  doctor_id bigserial  
-  patient_id bigserial  
-}  
+&nbsp;&nbsp;&nbsp;&nbsp;     id bigserial [primary key]  
+&nbsp;&nbsp;&nbsp;&nbsp;     created_at timestamp  
+&nbsp;&nbsp;&nbsp;&nbsp;     updated_at timestamp  
+&nbsp;&nbsp;&nbsp;&nbsp;     doctor_id bigserial  
+&nbsp;&nbsp;&nbsp;&nbsp;     patient_id bigserial  
+&nbsp;    }  
 
 Ref: appointments.doctor_id < doctors.id  
 Ref: appointments.patient_id < patients.id  
