@@ -11,8 +11,8 @@ type Patient struct {
 	Id        string `json:"id"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	First_name string `json:"firstName"`
+	Last_name  string `json:"lastName"`
 	Phone     string `json:"phone"`
 }
 
@@ -22,18 +22,18 @@ type PatientModel struct {
 	ErrorLog *log.Logger
 }
 
-func (m PatientModel) Insert(menu *Patient) error {
+func (m PatientModel) Insert(patient *Patient) error {
 	// Insert a new menu item into the database.
 	query := `
 		INSERT INTO patients (first_name, last_name, phone) 
 		VALUES ($1, $2, $3) 
 		RETURNING id, created_at, updated_at
 		`
-	args := []interface{}{menu.FirstName, menu.LastName, menu.Phone}
+	args := []interface{}{patient.First_name, patient.Last_name, patient.Phone}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return m.DB.QueryRowContext(ctx, query, args...).Scan(&menu.Id, &menu.CreatedAt, &menu.UpdatedAt)
+	return m.DB.QueryRowContext(ctx, query, args...).Scan(&patient.Id, &patient.CreatedAt, &patient.UpdatedAt)
 }
 
 func (m PatientModel) Get(id int) (*Patient, error) {
@@ -48,7 +48,7 @@ func (m PatientModel) Get(id int) (*Patient, error) {
 	defer cancel()
 
 	row := m.DB.QueryRowContext(ctx, query, id)
-	err := row.Scan(&patient.Id, &patient.CreatedAt, &patient.UpdatedAt, &patient.FirstName, &patient.LastName, &patient.Phone)
+	err := row.Scan(&patient.Id, &patient.CreatedAt, &patient.UpdatedAt, &patient.First_name, &patient.Last_name, &patient.Phone)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (m PatientModel) Update(patient *Patient) error {
 		WHERE id = $4
 		RETURNING updated_at
 		`
-	args := []interface{}{patient.FirstName, patient.LastName, patient.Phone, patient.Id}
+	args := []interface{}{patient.First_name, patient.Last_name, patient.Phone, patient.Id}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 

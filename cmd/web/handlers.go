@@ -28,8 +28,8 @@ func (app *application) respondWithJSON(w http.ResponseWriter, code int, payload
 func (app *application) createRegistration(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		First_name          string `json:"first_name"`
-		Last_name    string `json:"last_name"`
-		Phone uint   `json:"phone"`
+		Last_name    		string `json:"last_name"`
+		Phone 				uint   `json:"phone"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -44,7 +44,7 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 		Phone: 				input.Phone,
 	}
 
-	err = app.models.Registrations.Insert(registration)
+	err = app.models.Patients.Insert(registration)
 	if err != nil {
 		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
 		return
@@ -60,11 +60,11 @@ func (app *application) getAllRegistrations(w http.ResponseWriter, r *http.Reque
 
 	id, err := strconv.Atoi(param)
 	if err != nil || id < 1 {
-		app.respondWithError(w, http.StatusBadRequest, "There is no such doctor in our clinic, try another id")
+		app.respondWithError(w, http.StatusBadRequest, "There is no such registrations, try another Registration id")
 		return
 	}
 
-	registration, err := app.models.Registrations.Get(id)
+	registration, err := app.models.Patients.Get(id)
 	if err != nil {
 		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
 		return
@@ -79,20 +79,20 @@ func (app *application) updateRegistration(w http.ResponseWriter, r *http.Reques
 
 	id, err := strconv.Atoi(param)
 	if err != nil || id < 1 {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid menu ID")
+		app.respondWithError(w, http.StatusBadRequest, "Invalid registration Id writen, try another")
 		return
 	}
 
-	menu, err := app.models.Menus.Get(id)
+	registration, err := app.models.Patients.Get(id)
 	if err != nil {
 		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
 		return
 	}
 
 	var input struct {
-		Title          *string `json:"title"`
-		Description    *string `json:"description"`
-		NutritionValue *uint   `json:"nutritionValue"`
+		First_name          *string `json:"first_name"`
+		Last_name    		*string `json:"last_name"`
+		Phone 				*uint   `json:"phone"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -101,23 +101,55 @@ func (app *application) updateRegistration(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if input.Title != nil {
-		menu.Title = *input.Title
+	if input.First_name != nil {
+		registration.First_name = *input.First_name
 	}
 
-	if input.Description != nil {
-		menu.Description = *input.Description
+	if input.Last_name != nil {
+		registration.Last_name = *input.Last_name
 	}
 
-	if input.NutritionValue != nil {
-		menu.NutritionValue = *input.NutritionValue
+	if input.Phone != nil {
+		registration.Phone = *input.Phone
 	}
 
-	err = app.models.Menus.Update(menu)
+	err = app.models.Patients.Update(registration)
 	if err != nil {
 		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
 		return
 	}
 
-	app.respondWithJSON(w, http.StatusOK, menu)
+	app.respondWithJSON(w, http.StatusOK, registration)
+}
+
+func (app *application) deleteRegistration(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	param := vars["registrationId"]
+
+	id, err := strconv.Atoi(param)
+	if err != nil || id < 1 {
+		app.respondWithError(w, http.StatusBadRequest, "There is no such registrations with that Id")
+		return
+	}
+
+	err = app.models.Patients.Delete(id)
+	if err != nil {
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+}
+
+
+func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+
+	err := dec.Decode(dst)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
