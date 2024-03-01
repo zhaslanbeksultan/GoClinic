@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
 	"github.com/gorilla/mux"
+	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
 	"net/http"
 	"strconv"
 )
@@ -24,12 +24,13 @@ func (app *application) respondWithJSON(w http.ResponseWriter, code int, payload
 	w.WriteHeader(code)
 	w.Write(response)
 }
-//Create Registration function
+
+// Create Registration function
 func (app *application) createRegistration(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		First_name          string `json:"first_name"`
-		Last_name    		string `json:"last_name"`
-		Phone 				uint   `json:"phone"`
+		First_name string `json:"first_name"`
+		Last_name  string `json:"last_name"`
+		Phone      string `json:"phone"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -39,9 +40,9 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 	}
 
 	registration := &model.Patient{
-		First_name:         input.First_name,
-		Last_name:    		input.Last_name,
-		Phone: 				input.Phone,
+		First_name: input.First_name,
+		Last_name:  input.Last_name,
+		Phone:      input.Phone,
 	}
 
 	err = app.models.Patients.Insert(registration)
@@ -53,7 +54,7 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 	app.respondWithJSON(w, http.StatusCreated, registration)
 }
 
-//Get Registrations of the secific surgeon | function
+// Get Registrations of the secific surgeon | function
 func (app *application) getAllRegistrations(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["registrationId"]
@@ -90,9 +91,9 @@ func (app *application) updateRegistration(w http.ResponseWriter, r *http.Reques
 	}
 
 	var input struct {
-		First_name          *string `json:"first_name"`
-		Last_name    		*string `json:"last_name"`
-		Phone 				*uint   `json:"phone"`
+		First_name *string `json:"first_name"`
+		Last_name  *string `json:"last_name"`
+		Phone      *string `json:"phone"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -140,7 +141,6 @@ func (app *application) deleteRegistration(w http.ResponseWriter, r *http.Reques
 
 	app.respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
-
 
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 	dec := json.NewDecoder(r.Body)
