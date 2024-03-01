@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS patients
     updated_at      timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     first_name      text                        NOT NULL,
     last_name       text                        NOT NULL,
-    phone           int                         NOT NULL
+    phone           text                        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS appointments
