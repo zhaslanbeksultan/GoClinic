@@ -27,7 +27,7 @@ type application struct {
 func main() {
 
 	var cfg config
-	flag.StringVar(&cfg.port, "port", ":8081", "API server port")
+	flag.StringVar(&cfg.port, "port", ":8080", "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 	flag.StringVar(&cfg.db.dsn, "db-dsn", "jdbc:postgresql://localhost:5432/postgres", "PostgreSQL DSN")
 	flag.Parse()
@@ -56,11 +56,11 @@ func (app *application) run() {
 	// Create a new menu
 	v1.HandleFunc("/creation", app.createRegistration).Methods("POST")
 	// Get a specific menu
-	v1.HandleFunc("/registrations/{Id:[0-9]+}", app.getAllRegistrations).Methods("GET")
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.getAllRegistrations).Methods("GET")
 	// Update a specific menu
-	v1.HandleFunc("/registrations/{Id:[0-9]+}", app.updateRegistration).Methods("PUT")
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.updateRegistration).Methods("PUT")
 	// // Delete a specific menu
-	v1.HandleFunc("/registrations/{Id:[0-9]+}", app.deleteRegistration).Methods("DELETE")
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.deleteRegistration).Methods("DELETE")
 
 	log.Printf("Starting server on %s\n", app.config.port)
 	err := http.ListenAndServe(app.config.port, r)

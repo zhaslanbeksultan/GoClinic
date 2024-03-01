@@ -34,7 +34,7 @@ var doctors = []Doctor{
 		Id:         "2",
 		FirstName:  "Beks",
 		LastName:   "Zhaslan",
-		Speciality: "Stamatologist",
+		Speciality: "Dentist",
 		Phone:      "87778250062",
 	},
 	{
