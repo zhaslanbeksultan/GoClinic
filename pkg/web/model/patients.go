@@ -39,7 +39,7 @@ func (m PatientModel) Insert(menu *Patient) error {
 func (m PatientModel) Get(id int) (*Patient, error) {
 	// Retrieve a specific menu item based on its ID.
 	query := `
-		SELECT id, created_at, updated_at, title, description, nutrition_value
+		SELECT id, created_at, updated_at, first_name, last_name, phone
 		FROM patients
 		WHERE id = $1
 		`
