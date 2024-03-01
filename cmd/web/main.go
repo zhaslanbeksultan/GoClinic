@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
 )
-
+//my comment(Aidar)
 type config struct {
 	port string
 	env  string
