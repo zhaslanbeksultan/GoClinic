@@ -11,7 +11,6 @@ import (
 	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
 )
 
-// my comment(Aidar)
 type config struct {
 	port string
 	env  string
@@ -26,6 +25,7 @@ type application struct {
 }
 
 func main() {
+
 	var cfg config
 	flag.StringVar(&cfg.port, "port", ":8081", "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
@@ -51,17 +51,16 @@ func main() {
 func (app *application) run() {
 	r := mux.NewRouter()
 
-	// v1 := r.PathPrefix("/api/v1").Subrouter()
+	v1 := r.PathPrefix("/api/v1").Subrouter()
 
-	// Menu Singleton
 	// Create a new menu
-	// v1.HandleFunc("/menus", app.createMenuHandler).Methods("POST")
-	// // Get a specific menu
-	// v1.HandleFunc("/menus/{menuId:[0-9]+}", app.getMenuHandler).Methods("GET")
-	// // Update a specific menu
-	// v1.HandleFunc("/menus/{menuId:[0-9]+}", app.updateMenuHandler).Methods("PUT")
+	v1.HandleFunc("/creation", app.createRegistration).Methods("POST")
+	// Get a specific menu
+	v1.HandleFunc("/registrations/{Id:[0-9]+}", app.getAllRegistrations).Methods("GET")
+	// Update a specific menu
+	v1.HandleFunc("/registrations/{Id:[0-9]+}", app.updateRegistration).Methods("PUT")
 	// // Delete a specific menu
-	// v1.HandleFunc("/menus/{menuId:[0-9]+}", app.deleteMenuHandler).Methods("DELETE")
+	v1.HandleFunc("/registrations/{Id:[0-9]+}", app.deleteRegistration).Methods("DELETE")
 
 	log.Printf("Starting server on %s\n", app.config.port)
 	err := http.ListenAndServe(app.config.port, r)
