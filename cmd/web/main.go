@@ -10,7 +10,8 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
 )
-//my comment(Aidar)
+
+// my comment(Aidar)
 type config struct {
 	port string
 	env  string
@@ -28,7 +29,7 @@ func main() {
 	var cfg config
 	flag.StringVar(&cfg.port, "port", ":8081", "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
-	// flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://codev0:pa55word@localhost/lecture6?sslmode=disable", "PostgreSQL DSN")
+	flag.StringVar(&cfg.db.dsn, "db-dsn", "jdbc:postgresql://localhost:5432/postgres", "PostgreSQL DSN")
 	flag.Parse()
 
 	// Connect to DB
