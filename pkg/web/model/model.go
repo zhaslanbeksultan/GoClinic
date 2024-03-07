@@ -7,6 +7,7 @@ import (
 )
 
 type Models struct {
+	Patients PatientModel
 }
 
 func NewModels(db *sql.DB) Models {
