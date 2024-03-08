@@ -68,5 +68,5 @@ func GetDoctor(id string) (*Doctor, error) {
 			return &r, nil
 		}
 	}
-	return nil, errors.New("Doctor not found")
+	return nil, errors.New("doctor not found")
 }
