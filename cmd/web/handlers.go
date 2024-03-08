@@ -16,7 +16,7 @@ func (app *application) respondWithJSON(w http.ResponseWriter, code int, payload
 	response, err := json.Marshal(payload)
 
 	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error1")
 		return
 	}
 
@@ -47,7 +47,7 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 
 	err = app.models.Patients.Insert(registration)
 	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error2")
 		return
 	}
 
@@ -116,7 +116,7 @@ func (app *application) updateRegistration(w http.ResponseWriter, r *http.Reques
 
 	err = app.models.Patients.Update(registration)
 	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error3")
 		return
 	}
 
@@ -135,7 +135,7 @@ func (app *application) deleteRegistration(w http.ResponseWriter, r *http.Reques
 
 	err = app.models.Patients.Delete(id)
 	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error4")
 		return
 	}
 
