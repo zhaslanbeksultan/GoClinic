@@ -28,9 +28,9 @@ func (app *application) respondWithJSON(w http.ResponseWriter, code int, payload
 // Create Registration function
 func (app *application) createRegistration(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		First_name string `json:"first_name"`
-		Last_name  string `json:"last_name"`
-		Phone      string `json:"phone"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Phone     string `json:"phone"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -40,9 +40,9 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 	}
 
 	registration := &model.Patient{
-		First_name: input.First_name,
-		Last_name:  input.Last_name,
-		Phone:      input.Phone,
+		FirstName: input.FirstName,
+		LastName:  input.LastName,
+		Phone:     input.Phone,
 	}
 
 	err = app.models.Patients.Insert(registration)
@@ -54,7 +54,7 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 	app.respondWithJSON(w, http.StatusCreated, registration)
 }
 
-// Get Registrations of the secific surgeon | function
+// Get Registrations of the specific surgeon | function
 func (app *application) getAllRegistrations(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["registrationId"]
@@ -91,9 +91,9 @@ func (app *application) updateRegistration(w http.ResponseWriter, r *http.Reques
 	}
 
 	var input struct {
-		First_name *string `json:"first_name"`
-		Last_name  *string `json:"last_name"`
-		Phone      *string `json:"phone"`
+		FirstName *string `json:"first_name"`
+		LastName  *string `json:"last_name"`
+		Phone     *string `json:"phone"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -102,12 +102,12 @@ func (app *application) updateRegistration(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if input.First_name != nil {
-		registration.First_name = *input.First_name
+	if input.FirstName != nil {
+		registration.FirstName = *input.FirstName
 	}
 
-	if input.Last_name != nil {
-		registration.Last_name = *input.Last_name
+	if input.LastName != nil {
+		registration.LastName = *input.LastName
 	}
 
 	if input.Phone != nil {

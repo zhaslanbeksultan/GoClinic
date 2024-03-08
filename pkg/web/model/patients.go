@@ -23,13 +23,13 @@ type PatientModel struct {
 }
 
 func (m PatientModel) Insert(patient *Patient) error {
-	// Insert a new menu item into the database.
+	// Insert a new patient into the database.
 	query := `
 		INSERT INTO patients (first_name, last_name, phone) 
 		VALUES ($1, $2, $3) 
 		RETURNING id, created_at, updated_at
 		`
-	args := []interface{}{patient.First_name, patient.Last_name, patient.Phone}
+	args := []interface{}{patient.FirstName, patient.LastName, patient.Phone}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -37,7 +37,7 @@ func (m PatientModel) Insert(patient *Patient) error {
 }
 
 func (m PatientModel) Get(id int) (*Patient, error) {
-	// Retrieve a specific menu item based on its ID.
+	// Retrieve a specific patient based on his ID.
 	query := `
 		SELECT id, created_at, updated_at, first_name, last_name, phone
 		FROM patients
@@ -48,7 +48,7 @@ func (m PatientModel) Get(id int) (*Patient, error) {
 	defer cancel()
 
 	row := m.DB.QueryRowContext(ctx, query, id)
-	err := row.Scan(&patient.Id, &patient.CreatedAt, &patient.UpdatedAt, &patient.First_name, &patient.Last_name, &patient.Phone)
+	err := row.Scan(&patient.Id, &patient.CreatedAt, &patient.UpdatedAt, &patient.FirstName, &patient.LastName, &patient.Phone)
 	if err != nil {
 		return nil, err
 	}
@@ -56,14 +56,14 @@ func (m PatientModel) Get(id int) (*Patient, error) {
 }
 
 func (m PatientModel) Update(patient *Patient) error {
-	// Update a specific menu item in the database.
+	// Update a specific patient in the database.
 	query := `
 		UPDATE patients
 		SET first_name = $1, last_name = $2, phone = $3
 		WHERE id = $4
 		RETURNING updated_at
 		`
-	args := []interface{}{patient.First_name, patient.Last_name, patient.Phone, patient.Id}
+	args := []interface{}{patient.FirstName, patient.LastName, patient.Phone, patient.Id}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
