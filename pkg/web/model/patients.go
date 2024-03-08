@@ -8,12 +8,12 @@ import (
 )
 
 type Patient struct {
-	Id         string `json:"id"`
-	CreatedAt  string `json:"createdAt"`
-	UpdatedAt  string `json:"updatedAt"`
-	First_name string `json:"firstName"`
-	Last_name  string `json:"lastName"`
-	Phone      string `json:"phone"`
+	Id        string `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Phone     string `json:"phone"`
 }
 
 type PatientModel struct {
