@@ -38,7 +38,12 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+
+		}
+	}(db)
 
 	app := &application{
 		config: cfg,
@@ -55,11 +60,11 @@ func (app *application) run() {
 
 	// Create a new menu
 	v1.HandleFunc("/creation", app.createRegistration).Methods("POST")
-	// Get a specific menu
+	// Get a specific patient
 	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.getAllRegistrations).Methods("GET")
-	// Update a specific menu
+	// Update a specific patient
 	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.updateRegistration).Methods("PUT")
-	// // Delete a specific menu
+	// // Delete a specific patient
 	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.deleteRegistration).Methods("DELETE")
 
 	log.Printf("Starting server on %s\n", app.config.port)
@@ -69,7 +74,7 @@ func (app *application) run() {
 
 func openDB(cfg config) (*sql.DB, error) {
 	// Use sql.Open() to create an empty connection pool, using the DSN from the config // struct.
-	db, err := sql.Open("postgres", cfg.db.dsn)
+	db, err := sql.Open(`postgres`, cfg.db.dsn)
 	if err != nil {
 		return nil, err
 	}

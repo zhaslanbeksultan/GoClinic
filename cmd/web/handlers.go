@@ -54,7 +54,7 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 	app.respondWithJSON(w, http.StatusCreated, registration)
 }
 
-// Get Registrations of the secific surgeon | function
+// Get Registrations of the specific surgeon | function
 func (app *application) getAllRegistrations(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["registrationId"]
@@ -80,7 +80,7 @@ func (app *application) updateRegistration(w http.ResponseWriter, r *http.Reques
 
 	id, err := strconv.Atoi(param)
 	if err != nil || id < 1 {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid registration Id writen, try another")
+		app.respondWithError(w, http.StatusBadRequest, "Invalid registration Id written, try another")
 		return
 	}
 
