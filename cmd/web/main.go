@@ -71,7 +71,7 @@ func (app *application) run() {
 	// Get filtered patients list
 	v1.HandleFunc("/registrations", app.getFilteredRegistrations).Methods("GET")
 	// Get paginated patients list
-	v1.HandleFunc("/registrations", app.getPaginatedRegistrations).Methods("GET")
+	v1.HandleFunc("/registrations/paginated", app.getPaginatedRegistrations).Methods("GET")
 
 	log.Printf("Starting server on %s\n", app.config.port)
 	err := http.ListenAndServe(app.config.port, r)
