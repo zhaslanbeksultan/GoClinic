@@ -61,11 +61,17 @@ func (app *application) run() {
 	// Create a new menu
 	v1.HandleFunc("/creation", app.createRegistration).Methods("POST")
 	// Get a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.getAllRegistrations).Methods("GET")
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.getRegistration).Methods("GET")
 	// Update a specific patient
 	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.updateRegistration).Methods("PUT")
 	// // Delete a specific patient
 	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.deleteRegistration).Methods("DELETE")
+	// Get sorted patients list
+	v1.HandleFunc("/registrations/sorted", app.getSortedRegistrations).Methods("GET")
+	// Get filtered patients list
+	v1.HandleFunc("/registrations", app.getFilteredRegistrations).Methods("GET")
+	// Get paginated patients list
+	v1.HandleFunc("/registrations", app.getPaginatedRegistrations).Methods("GET")
 
 	log.Printf("Starting server on %s\n", app.config.port)
 	err := http.ListenAndServe(app.config.port, r)
