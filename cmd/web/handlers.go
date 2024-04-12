@@ -55,7 +55,7 @@ func (app *application) createRegistration(w http.ResponseWriter, r *http.Reques
 }
 
 // Get Registrations of the specific surgeon | function
-func (app *application) getAllRegistrations(w http.ResponseWriter, r *http.Request) {
+func (app *application) getRegistration(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["registrationId"]
 
@@ -72,6 +72,31 @@ func (app *application) getAllRegistrations(w http.ResponseWriter, r *http.Reque
 	}
 
 	app.respondWithJSON(w, http.StatusOK, registration)
+}
+
+func (app *application) getSortedRegistrations(w http.ResponseWriter, r *http.Request) {
+
+	sorted_registrations, err := app.models.Patients.GetAllSortedByName()
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, sorted_registrations)
+}
+
+func (app *application) getFilteredRegistrations(w http.ResponseWriter, r *http.Request) {
+
+	filterParam := r.URL.Query().Get("filter")
+
+	filtered_registrations, err := app.models.Patients.GetFilteredByText(filterParam)
+
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, filtered_registrations)
 }
 
 func (app *application) updateRegistration(w http.ResponseWriter, r *http.Request) {
@@ -152,4 +177,31 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst int
 	}
 
 	return nil
+}
+
+func (app *application) getPaginatedRegistrations(w http.ResponseWriter, r *http.Request) {
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 {
+		http.Error(w, "Invalid limit parameter", http.StatusBadRequest)
+		return
+	}
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		http.Error(w, "Invalid offset parameter", http.StatusBadRequest)
+		return
+	}
+
+	// Получение пациентов с использованием общей функции пагинации
+	patients, err := app.models.Patients.GetPaginatedPatients(limit, offset)
+	if err != nil {
+		http.Error(w, "Failed to get patients", http.StatusInternalServerError)
+		return
+	}
+
+	// Отправка пациентов в ответ в формате JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(patients)
 }
