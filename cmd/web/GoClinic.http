@@ -43,6 +43,15 @@ GET localhost:8080/api/v1/registrations?filter=Aidar
     });
 %}
 
+### Get Paginated list of Patients
+GET localhost:8080/api/v1/registrations/paginated?limit=3&offset=0
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
 ### Update Registration of the patient
 PUT localhost:8080/api/v1/registrations/1
 Content-Type: application/json
