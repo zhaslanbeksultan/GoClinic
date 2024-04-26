@@ -67,7 +67,7 @@ func (app *application) run() {
 	// // Delete a specific patient
 	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.deleteRegistration).Methods("DELETE")
 	// Get sorted patients list
-	v1.HandleFunc("/registrations/sorted", app.getSortedRegistrations).Methods("GET")
+	v1.HandleFunc("/registrations/sorting", app.getSortedRegistrations).Methods("GET")
 	// Get filtered patients list
 	v1.HandleFunc("/registrations", app.getFilteredRegistrations).Methods("GET")
 	// Get paginated patients list

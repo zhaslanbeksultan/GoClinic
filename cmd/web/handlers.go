@@ -76,13 +76,38 @@ func (app *application) getRegistration(w http.ResponseWriter, r *http.Request) 
 
 func (app *application) getSortedRegistrations(w http.ResponseWriter, r *http.Request) {
 
-	sorted_registrations, err := app.models.Patients.GetAllSortedByName()
+	sortParam := r.URL.Query().Get("sort")
+	sortDirection := r.URL.Query().Get("sort_direction")
+
+	if sortDirection != "DESC" {
+		sortDirection = "ASC"
+	}
+
+	filters := model.Filters{
+		Sort:          sortParam,
+		SortDirection: sortDirection,
+		SortSafelist:  []string{"first_name", "last_name", "id", "-first_name", "-last_name", "-id"}, // Add any safe sorting criteria
+	}
+
+	// Call GetAllSortedByName method from the PatientModel instance
+	registrations, err := app.models.Patients.GetAllSortedByName(filters)
 	if err != nil {
-		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		app.respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
-	app.respondWithJSON(w, http.StatusOK, sorted_registrations)
+	// Marshal registrations into JSON format
+	jsonRegistrations, err := json.Marshal(registrations)
+	if err != nil {
+		app.respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	// Set content type header
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write JSON response
+	w.Write(jsonRegistrations)
 }
 
 func (app *application) getFilteredRegistrations(w http.ResponseWriter, r *http.Request) {
