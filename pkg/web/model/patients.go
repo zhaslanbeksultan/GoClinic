@@ -3,7 +3,9 @@ package model
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -20,6 +22,14 @@ type PatientModel struct {
 	DB       *sql.DB
 	InfoLog  *log.Logger
 	ErrorLog *log.Logger
+}
+
+type Filters struct {
+	Page          int
+	PageSize      int
+	Sort          string
+	SortDirection string
+	SortSafelist  []string
 }
 
 func (m PatientModel) Insert(patient *Patient) error {
@@ -83,12 +93,31 @@ func (m PatientModel) Delete(id int) error {
 	return err
 }
 
-func (m PatientModel) GetAllSortedByName() ([]*Patient, error) {
-	query := `
+func (f Filters) sortColumn() string {
+	for _, safeValue := range f.SortSafelist {
+		if f.Sort == safeValue {
+			return strings.TrimPrefix(f.Sort, "-")
+		}
+	}
+	panic("unsafe sort parameter: " + f.Sort)
+}
+
+func (f Filters) sortDirection() string {
+	if strings.HasPrefix(f.Sort, "-") {
+		return "DESC"
+	}
+	return "ASC"
+}
+
+func (m PatientModel) GetAllSortedByName(filters Filters) ([]*Patient, error) {
+	query := fmt.Sprintf(
+		`
         SELECT id, created_at, updated_at, first_name, last_name, phone
         FROM patients
-        ORDER BY first_name, last_name
-        `
+        ORDER BY %s %s`,
+		filters.sortColumn(),
+		filters.sortDirection(),
+	)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
