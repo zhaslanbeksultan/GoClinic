@@ -7,7 +7,10 @@ import (
 )
 
 type Models struct {
-	Patients PatientModel
+	Patients    PatientModel
+	Users       UserModel
+	Tokens      TokenModel
+	Permissions PermissionModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -19,5 +22,20 @@ func NewModels(db *sql.DB) Models {
 			InfoLog:  infoLog,
 			ErrorLog: errorLog,
 		},
+		Users: UserModel{
+			DB:       db,
+			InfoLog:  infoLog,
+			ErrorLog: errorLog,
+		},
+		//Tokens: TokenModel{
+		//	DB:       db,
+		//	InfoLog:  infoLog,
+		//	ErrorLog: errorLog,
+		//},
+		//Permissions: PermissionModel{
+		//	DB:       db,
+		//	InfoLog:  infoLog,
+		//	ErrorLog: errorLog,
+		//},
 	}
 }

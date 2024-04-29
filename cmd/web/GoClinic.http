@@ -3,8 +3,8 @@ POST localhost:8080/api/v1/creation
 Content-Type: application/json
 
 {
-  "first_name": "Airat",
-  "last_name": "Zhanshuakov",
+  "first_name": "Beks",
+  "last_name": "Zhaslan",
   "phone": "228336"
 }
 
@@ -14,6 +14,21 @@ Content-Type: application/json
     });
 %}
 
+###Create User
+POST localhost:8080/api/v1/users
+Content-Type: application/json
+
+{
+  "name": "Beks",
+  "email": "beks@gmail.com",
+  "phone": "pa55word"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
 
 
 ### Get Patient with id=1
@@ -69,7 +84,7 @@ Content-Type: application/json
 
 
 ### Delete Registration from Database
-DELETE localhost:8080/api/v1/registrations/1
+DELETE localhost:8080/api/v1/registrations/3
 Content-Type: application/json
 
 > {%

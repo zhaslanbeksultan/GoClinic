@@ -5,9 +5,11 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/zhaslanbeksultan/GoClinic/pkg/web/jsonlog"
 	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
 )
 
@@ -22,6 +24,8 @@ type config struct {
 type application struct {
 	config config
 	models model.Models
+	logger *jsonlog.Logger
+	wg     sync.WaitGroup
 }
 
 func main() {
@@ -29,7 +33,7 @@ func main() {
 	var cfg config
 	flag.StringVar(&cfg.port, "port", ":8080", "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
-	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://localhost:5432/postgres?sslmode=disable", "PostgreSQL DSN")
+	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://postgres:$F00tba11@localhost:5432/postgres?sslmode=disable", "PostgreSQL DSN")
 	flag.Parse()
 
 	// Connect to DB
@@ -72,6 +76,11 @@ func (app *application) run() {
 	v1.HandleFunc("/registrations", app.getFilteredRegistrations).Methods("GET")
 	// Get paginated patients list
 	v1.HandleFunc("/registrations/paginated", app.getPaginatedRegistrations).Methods("GET")
+
+	users1 := r.PathPrefix("/api/v1").Subrouter()
+	users1.HandleFunc("/users", app.registerUserHandler).Methods("POST")
+	users1.HandleFunc("/users/activated", app.activateUserHandler).Methods("PUT")
+	users1.HandleFunc("/users/login", app.createAuthenticationTokenHandler).Methods("POST")
 
 	log.Printf("Starting server on %s\n", app.config.port)
 	err := http.ListenAndServe(app.config.port, r)
