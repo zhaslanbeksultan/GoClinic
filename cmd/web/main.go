@@ -3,18 +3,16 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"log"
-	"net/http"
-	"sync"
-
+	"fmt"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/jsonlog"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
+	pkg "github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
+	"log"
+	"net/http"
 )
 
 type config struct {
-	port string
+	port int
 	env  string
 	db   struct {
 		dsn string
@@ -23,15 +21,12 @@ type config struct {
 
 type application struct {
 	config config
-	models model.Models
-	logger *jsonlog.Logger
-	wg     sync.WaitGroup
+	models pkg.Models
 }
 
 func main() {
-
 	var cfg config
-	flag.StringVar(&cfg.port, "port", ":8080", "API server port")
+	flag.IntVar(&cfg.port, "port", 8080, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://postgres:$F00tba11@localhost:5432/postgres?sslmode=disable", "PostgreSQL DSN")
 	flag.Parse()
@@ -42,53 +37,62 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-
-		}
-	}(db)
-
+	defer db.Close()
+	err = db.Ping()
+	if err != nil {
+		log.Fatal("Cannot connect to the database: ", err)
+	} else {
+		log.Println("Connected to the database")
+	}
 	app := &application{
 		config: cfg,
-		models: model.NewModels(db),
+		models: pkg.NewModels(db),
 	}
 
-	app.run()
+	if err := app.serve(); err != nil {
+		fmt.Sprintf("error starting server: %v\n", err)
+	}
+	//app.run()
 }
 
-func (app *application) run() {
+func (app *application) run() http.Handler {
 	r := mux.NewRouter()
 
 	v1 := r.PathPrefix("/api/v1").Subrouter()
 
+	// Menu Singleton
 	// Create a new menu
-	v1.HandleFunc("/creation", app.createRegistration).Methods("POST")
-	// Get a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.getRegistration).Methods("GET")
-	// Update a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.updateRegistration).Methods("PUT")
-	// // Delete a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.deleteRegistration).Methods("DELETE")
-	// Get sorted patients list
-	v1.HandleFunc("/registrations/sorting", app.getSortedRegistrations).Methods("GET")
-	// Get filtered patients list
-	v1.HandleFunc("/registrations", app.getFilteredRegistrations).Methods("GET")
-	// Get paginated patients list
-	v1.HandleFunc("/registrations/paginated", app.getPaginatedRegistrations).Methods("GET")
+	v1.HandleFunc("/doctors", app.createDoctorHandler).Methods("POST")
+	// Get a specific menu
+	v1.HandleFunc("/doctors", app.getDoctorsHandler).Methods("GET")
+	v1.HandleFunc("/doctors/{doctorId:[0-9]+}", app.requireActivatedUser(app.getDoctorHandler)).Methods("GET")
+	// Update a specific menu
+	v1.HandleFunc("/doctors/{doctorId:[0-9]+}", app.updateDoctorHandler).Methods("PUT")
+	// Delete a specific menu
+	v1.HandleFunc("/doctors/{doctorId:[0-9]+}", app.deleteDoctorHandler).Methods("DELETE")
 
-	users1 := r.PathPrefix("/api/v1").Subrouter()
-	users1.HandleFunc("/users", app.registerUserHandler).Methods("POST")
-	users1.HandleFunc("/users/activated", app.activateUserHandler).Methods("PUT")
-	users1.HandleFunc("/users/login", app.createAuthenticationTokenHandler).Methods("POST")
+	v1.HandleFunc("/patients", app.createPatientHandler).Methods("POST")
+	v1.HandleFunc("/patients", app.getPatientsHandler).Methods("GET")
+	v1.HandleFunc("/patients/{patientId:[0-9]+}", app.requireActivatedUser(app.getPatientHandler)).Methods("GET")
+	v1.HandleFunc("/patients/{patientId:[0-9]+}", app.updatePatientHandler).Methods("PUT")
+	v1.HandleFunc("/patients/{patientId:[0-9]+}", app.deletePatientHandler).Methods("DELETE")
+
+	v1.HandleFunc("/users", app.registerUserHandler).Methods("POST")
+	v1.HandleFunc("/users/activated", app.activateUserHandler).Methods("PUT")
+	v1.HandleFunc("/tokens/authentication", app.createAuthenticationTokenHandler).Methods("POST")
 
 	log.Printf("Starting server on %s\n", app.config.port)
-	err := http.ListenAndServe(app.config.port, r)
-	log.Fatal(err)
-}
+	//err := http.ListenAndServe(app.config.port, r)
+	//if err != nil {
+	//
+	//}
+	return app.authenticate(r)
 
+}
 func openDB(cfg config) (*sql.DB, error) {
-	db, err := sql.Open(`postgres`, cfg.db.dsn)
+	// Use sql.Open() to create an empty connection pool, using the DSN from the config // struct.
+	db, err := sql.Open("postgres", cfg.db.dsn)
+	fmt.Println(db)
 	if err != nil {
 		return nil, err
 	}

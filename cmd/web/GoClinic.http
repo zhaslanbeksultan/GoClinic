@@ -1,10 +1,11 @@
-###Create Registration of the Patient
-POST localhost:8080/api/v1/creation
+###Create Doctor
+POST localhost:8080/api/v1/doctors
 Content-Type: application/json
 
 {
-  "first_name": "Beks",
-  "last_name": "Zhaslan",
+  "firsName": "Beks",
+  "lastName": "Zhaslan",
+  "speciality": "dentist",
   "phone": "228336"
 }
 
@@ -31,8 +32,8 @@ Content-Type: application/json
 %}
 
 
-### Get Patient with id=1
-GET localhost:8080/api/v1/registrations/3
+### Get Doctor with id=1
+GET localhost:8080/api/v1/doctors/1
 
 > {%
     client.test("Request executed successfully", function() {
