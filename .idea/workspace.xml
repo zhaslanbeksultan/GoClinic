@@ -5,38 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37409941-a961-4044-b78c-7f8cea61651e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/web/context.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/web/errors.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/web/healthcheck.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/web/helpers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/web/middleware.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/web/routes.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/web/server.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/web/tokens.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/jsonlog/jsonlog.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/vcs/vcs.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/web/migrations/20240429183846_create_tables.down.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/web/migrations/20240429183846_create_tables.up.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/web/model/filler/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/web/model/filters.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/web/validator/validator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/GoClinic.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/web/GoClinic.http" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/web/GoClinic.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/web/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/web/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/web/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/web/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/migrations/20240301103141_create_tables.down.sql" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/migrations/20240301103141_create_tables.down.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/migrations/20240301103141_create_tables.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/migrations/20240301103141_create_tables.up.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/model/doctors.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/model/doctors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/model/model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/model/patients.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/model/patients.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/model/permissions.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/model/permissions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/model/tokens.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/model/tokens.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/web/model/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/web/model/users.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,6 +60,7 @@
     &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/aid31_d3&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
