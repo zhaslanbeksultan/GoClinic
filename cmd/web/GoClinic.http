@@ -3,8 +3,31 @@ POST localhost:8080/api/v1/creation
 Content-Type: application/json
 
 {
-  "first_name": "Airat",
-  "last_name": "Zhanshuakov",
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
+
+
+
+
+###Patients API's
+
+###Create Registration of the Patient
+POST localhost:8080/api/v1/creation
+Content-Type: application/json
+
+{
+  "first_name": "Mohammed",
+  "last_name": "Salah",
   "phone": "228336"
 }
 

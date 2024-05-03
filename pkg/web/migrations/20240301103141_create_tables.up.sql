@@ -19,16 +19,11 @@ CREATE TABLE IF NOT EXISTS patients
     phone           text                        NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS appointments
-(
-    id               bigserial PRIMARY KEY,
-    created_at       timestamp(0) with time zone NOT NULL DEFAULT NOW(),
-    updated_at       timestamp(0) with time zone NOT NULL DEFAULT NOW(),
-    appointment_date timestamp(0) with time zone NOT NULL,
-    doctor_id        bigserial,
-    patient_id       bigserial,
-    FOREIGN KEY (doctor_id)
-        REFERENCES doctors(id),
-    FOREIGN KEY (patient_id)
-        REFERENCES patients(id)
+CREATE TABLE IF NOT EXISTS users (
+    id bigserial PRIMARY KEY,
+    created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(), name text NOT NULL,
+    email text UNIQUE NOT NULL,
+    password_hash bytea NOT NULL,
+    activated bool NOT NULL,
+    version integer NOT NULL DEFAULT 1
 );
