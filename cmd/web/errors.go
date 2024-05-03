@@ -7,12 +7,12 @@ import (
 
 // logError method is a generic helper for logging an error message in *application, as well
 // as the requested method and request URL.
-//func (app *application) logError(r *http.Request, err error) {
-//	app.logger.PrintError(err, map[string]string{
-//		"request_method": r.Method,
-//		"request_url":    r.URL.String(),
-//	})
-//}
+func (app *application) logError(r *http.Request, err error) {
+	app.logger.PrintError(err, map[string]string{
+		"request_method": r.Method,
+		"request_url":    r.URL.String(),
+	})
+}
 
 // errorResponse method is a generic helper for sending JSON-formatted error messages to the
 // client with a given status code. Note that we're using an interface{} type for the message
@@ -26,7 +26,7 @@ func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, st
 	// Server Error status code
 	err := app.writeJSON(w, status, env, nil)
 	if err != nil {
-		//app.logError(r, err)
+		app.logError(r, err)
 		w.WriteHeader(500)
 	}
 }
@@ -36,7 +36,7 @@ func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, st
 // 500 Internal Server Error status code and JSON response (containing the generic error message)
 // to the client
 func (app *application) serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
-	//app.logError(r, err)
+	app.logError(r, err)
 
 	message := "the server encountered a problem and could not process your request"
 	app.errorResponse(w, r, 500, message)

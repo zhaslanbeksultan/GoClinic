@@ -1,39 +1,45 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
+// routes is our main application's router.
 func (app *application) routes() http.Handler {
 	r := mux.NewRouter()
+	// Convert the app.notFoundResponse helper to a http.Handler using the http.HandlerFunc()
+	// adapter, and then set it as the custom error handler for 404 Not Found responses.
+	r.NotFoundHandler = http.HandlerFunc(app.notFoundResponse)
 
-	v1 := r.PathPrefix("/api/v1").Subrouter()
+	// Convert app.methodNotAllowedResponse helper to a http.Handler and set it as the custom
+	// error handler for 405 Method Not Allowed responses
+	r.MethodNotAllowedHandler = http.HandlerFunc(app.methodNotAllowedResponse)
+
+	// healthcheck
+	r.HandleFunc("/api/v1/healthcheck", app.healthcheckHandler).Methods("GET")
+
+	menu1 := r.PathPrefix("/api/v1").Subrouter()
 
 	// Menu Singleton
+	// localhost:8081/api/v1/menus
+	menu1.HandleFunc("/doctors", app.getDoctorsHandler).Methods("GET")
 	// Create a new menu
-	v1.HandleFunc("/doctors", app.createDoctorHandler).Methods("POST")
+	menu1.HandleFunc("/doctors", app.createDoctorHandler).Methods("POST")
 	// Get a specific menu
-	v1.HandleFunc("/doctors", app.getDoctorsHandler).Methods("GET")
-	v1.HandleFunc("/doctors/{doctorId:[0-9]+}", app.requireActivatedUser(app.getDoctorHandler)).Methods("GET")
+	menu1.HandleFunc("/doctors/{id:[0-9]+}", app.getDoctorHandler).Methods("GET")
 	// Update a specific menu
-	v1.HandleFunc("/doctors/{doctorId:[0-9]+}", app.requirePermission("doctor.update", app.updateDoctorHandler)).Methods("PUT")
+	menu1.HandleFunc("/doctors/{id:[0-9]+}", app.updateDoctorHandler).Methods("PUT")
 	// Delete a specific menu
-	v1.HandleFunc("/doctors/{doctorId:[0-9]+}", app.requirePermission("doctor.delete", app.deleteDoctorHandler)).Methods("DELETE")
+	menu1.HandleFunc("/doctors/{id:[0-9]+}", app.requirePermissions("menus:write", app.deleteDoctorHandler)).Methods("DELETE")
 
-	v1.HandleFunc("/patients", app.createPatientHandler).Methods("POST")
-	v1.HandleFunc("/patients", app.getPatientsHandler).Methods("GET")
-	v1.HandleFunc("/patients/{patientId:[0-9]+}", app.requireActivatedUser(app.getPatientHandler)).Methods("GET")
-	v1.HandleFunc("/patients/{patientId:[0-9]+}", app.updatePatientHandler).Methods("PUT")
-	v1.HandleFunc("/patients/{patientId:[0-9]+}", app.deletePatientHandler).Methods("DELETE")
+	users1 := r.PathPrefix("/api/v1").Subrouter()
+	// User handlers with Authentication
+	users1.HandleFunc("/users", app.registerUserHandler).Methods("POST")
+	users1.HandleFunc("/users/activated", app.activateUserHandler).Methods("PUT")
+	users1.HandleFunc("/users/login", app.createAuthenticationTokenHandler).Methods("POST")
 
-	v1.HandleFunc("/users", app.registerUserHandler).Methods("POST")
-	v1.HandleFunc("/users/activated", app.activateUserHandler).Methods("PUT")
-	v1.HandleFunc("/tokens/authentication", app.createAuthenticationTokenHandler).Methods("POST")
-
-	log.Printf("Starting server on %d\n", app.config.port)
-	//err := http.ListenAndServe(app.config.port, r)
-
+	// Wrap the router with the panic recovery middleware and rate limit middleware.
 	return app.authenticate(r)
 }
