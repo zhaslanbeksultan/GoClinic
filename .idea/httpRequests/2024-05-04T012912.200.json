@@ -1,0 +1,66 @@
+[
+  {
+    "id": "2",
+    "createdAt": "2024-04-12T04:23:35+05:00",
+    "updatedAt": "2024-04-12T04:23:35+05:00",
+    "firstName": "Aidar",
+    "lastName": "Zhaxylykuly",
+    "phone": "228336"
+  },
+  {
+    "id": "3",
+    "createdAt": "2024-04-12T04:23:59+05:00",
+    "updatedAt": "2024-04-12T04:23:59+05:00",
+    "firstName": "Bexultan",
+    "lastName": "Zhaslan",
+    "phone": "228336"
+  },
+  {
+    "id": "4",
+    "createdAt": "2024-04-12T04:24:15+05:00",
+    "updatedAt": "2024-04-12T04:24:15+05:00",
+    "firstName": "Anuar",
+    "lastName": "Kurmanov",
+    "phone": "228336"
+  },
+  {
+    "id": "5",
+    "createdAt": "2024-04-12T04:24:36+05:00",
+    "updatedAt": "2024-04-12T04:24:36+05:00",
+    "firstName": "Arsen",
+    "lastName": "Zhexenbiyev",
+    "phone": "228336"
+  },
+  {
+    "id": "6",
+    "createdAt": "2024-04-12T04:24:56+05:00",
+    "updatedAt": "2024-04-12T04:24:56+05:00",
+    "firstName": "Zhomart",
+    "lastName": "Zhexenbay",
+    "phone": "228336"
+  },
+  {
+    "id": "7",
+    "createdAt": "2024-04-12T04:25:32+05:00",
+    "updatedAt": "2024-04-12T04:25:32+05:00",
+    "firstName": "Amir",
+    "lastName": "Adilov",
+    "phone": "228336"
+  },
+  {
+    "id": "8",
+    "createdAt": "2024-04-12T04:25:52+05:00",
+    "updatedAt": "2024-04-12T04:25:52+05:00",
+    "firstName": "Airat",
+    "lastName": "Zhanshuakov",
+    "phone": "228336"
+  },
+  {
+    "id": "9",
+    "createdAt": "2024-05-04T00:27:39+05:00",
+    "updatedAt": "2024-05-04T00:27:39+05:00",
+    "firstName": "Mohammed",
+    "lastName": "Salah",
+    "phone": "228336"
+  }
+]
