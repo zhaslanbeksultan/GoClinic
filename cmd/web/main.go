@@ -1,20 +1,24 @@
 package main
 
 import (
+	"GoClinic/pkg/web/jsonlog"
+	"GoClinic/pkg/web/model"
 	"database/sql"
 	"flag"
-	"log"
-	"net/http"
-
-	"github.com/gorilla/mux"
+	"fmt"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/lib/pq"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
+	"github.com/peterbourgon/ff/v3"
+	"os"
+	"sync"
 )
 
 type config struct {
-	port string
-	env  string
-	db   struct {
+	port       int
+	env        string
+	migrations string
+	db         struct {
 		dsn string
 	}
 }
@@ -22,66 +26,92 @@ type config struct {
 type application struct {
 	config config
 	models model.Models
+	logger *jsonlog.Logger
+	wg     sync.WaitGroup
 }
 
 func main() {
+	fs := flag.NewFlagSet("demo-app", flag.ContinueOnError)
 
-	var cfg config
-	flag.StringVar(&cfg.port, "port", ":8080", "API server port")
-	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
-	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://localhost:5432/postgres?sslmode=disable", "PostgreSQL DSN")
-	flag.Parse()
+	var (
+		cfg        config
+		migrations = fs.String("migrations", "", "file://pkg/web/migrations")
+		port       = fs.Int("port", 8080, "API server port")
+		env        = fs.String("env", "development", "Environment (development|staging|production)")
+		dbDsn      = fs.String("dsn", "postgres://postgres:1234@postgres:5432/postgres?sslmode=disable", "PostgreSQL DSN")
+	)
+	//postgres://localhost:5432/postgres?sslmode=disable
+	// Init logger
+	logger := jsonlog.NewLogger(os.Stdout, jsonlog.LevelInfo)
+
+	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVars()); err != nil {
+		logger.PrintFatal(err, nil)
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+	}
+
+	cfg.port = *port
+	cfg.env = *env
+	cfg.db.dsn = *dbDsn
+	cfg.migrations = *migrations
+
+	logger.PrintInfo("starting application with configuration", map[string]string{
+		"port":       fmt.Sprintf("%d", cfg.port),
+		"env":        cfg.env,
+		"db":         cfg.db.dsn,
+		"migrations": cfg.migrations,
+	})
 
 	// Connect to DB
 	db, err := openDB(cfg)
 	if err != nil {
-		log.Fatal(err)
+		logger.PrintError(err, nil)
 		return
 	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-
+	// Defer a call to db.Close() so that the connection pool is closed before the main()
+	// function exits.
+	defer func() {
+		if err := db.Close(); err != nil {
+			logger.PrintFatal(err, nil)
 		}
-	}(db)
+	}()
 
 	app := &application{
 		config: cfg,
 		models: model.NewModels(db),
+		logger: logger,
 	}
 
-	app.run()
-}
-
-func (app *application) run() {
-	r := mux.NewRouter()
-
-	v1 := r.PathPrefix("/api/v1").Subrouter()
-
-	// Create a new menu
-	v1.HandleFunc("/creation", app.createRegistration).Methods("POST")
-	// Get a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.getRegistration).Methods("GET")
-	// Update a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.updateRegistration).Methods("PUT")
-	// // Delete a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.deleteRegistration).Methods("DELETE")
-	// Get sorted patients list
-	v1.HandleFunc("/registrations/sorting", app.getSortedRegistrations).Methods("GET")
-	// Get filtered patients list
-	v1.HandleFunc("/registrations", app.getFilteredRegistrations).Methods("GET")
-	// Get paginated patients list
-	v1.HandleFunc("/registrations/paginated", app.getPaginatedRegistrations).Methods("GET")
-
-	log.Printf("Starting server on %s\n", app.config.port)
-	err := http.ListenAndServe(app.config.port, r)
-	log.Fatal(err)
+	// Call app.server() to start the server.
+	if err := app.serve(); err != nil {
+		logger.PrintFatal(err, nil)
+	}
 }
 
 func openDB(cfg config) (*sql.DB, error) {
-	db, err := sql.Open(`postgres`, cfg.db.dsn)
+	// Use sql.Open() to create an empty connection pool, using the DSN from the config // struct.
+	db, err := sql.Open("postgres", cfg.db.dsn)
 	if err != nil {
 		return nil, err
 	}
+	err = db.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	// https://github.com/golang-migrate/migrate?tab=readme-ov-file#use-in-your-go-project
+	if cfg.migrations != "" {
+		driver, err := postgres.WithInstance(db, &postgres.Config{})
+		if err != nil {
+			return nil, err
+		}
+		m, err := migrate.NewWithDatabaseInstance(
+			cfg.migrations,
+			"postgres", driver)
+		if err != nil {
+			return nil, err
+		}
+		m.Up()
+	}
+
 	return db, nil
 }
