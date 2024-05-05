@@ -9,7 +9,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - .:/app
+      - .:/usr/src/app
       - ./pkg/web/migrations:/app/pkg/web/migrations
     depends_on:
       - postgres
