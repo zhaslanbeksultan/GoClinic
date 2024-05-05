@@ -8,12 +8,16 @@ import (
 	"log"
 	"time"
 
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/validator"
+	"GoClinic/pkg/web/validator"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var (
 	ErrDuplicateEmail = errors.New("duplicate email")
+	// ErrRecordNotFound is returned when a record doesn't exist in database.
+	ErrRecordNotFound = errors.New("record not found")
+	// ErrEditConflict is returned when a there is a data race, and we have an edit conflict.
+	ErrEditConflict = errors.New("edit conflict")
 )
 
 var AnonymousUser = &User{}

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: main_app
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - ./pkg/web/migrations:/app/pkg/web/migrations
+    depends_on:
+      - postgres
+    networks:
+      - fullstack
+  #    command: ["sh", "-c", "migrate -path ./pkg/epl/migrations -database 'postgres://postgres:password@postgres:5432/project?sslmode=disable' force 1"]
+
+  postgres:
+    image: postgres:latest
+    container_name: db_postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_HOST=${POSTGRES_HOST}
+    ports:
+      - "5433:5432"
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - fullstack
+
+
+
+volumes:
+  database_postgres:
+
+networks:
+  fullstack:
+    driver: bridge

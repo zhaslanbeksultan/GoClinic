@@ -1,387 +1,248 @@
 package main
 
 import (
+	"GoClinic/pkg/web/model"
 	"encoding/json"
-	"errors"
-	"fmt"
-	pkg "github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/validator"
-	"net/http"
-	"time"
-
-	"strconv"
-
 	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
-// patient handlers
-func (app *application) getPatientHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["patientId"])
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid patient number")
-		return
-	}
-
-	patient, err := app.models.Patients.GetPatient(id)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusNotFound, "Patient not found")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusOK, patient)
-}
-func (app *application) getPatientsHandler(w http.ResponseWriter, r *http.Request) {
-	patients, err := app.models.Patients.GetPatients()
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusOK, patients)
-
-}
-func (app *application) createPatientHandler(w http.ResponseWriter, r *http.Request) {
-	var patient pkg.Patient
-	err := json.NewDecoder(r.Body).Decode(&patient)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	if patient.FirstName == "" || patient.LastName == "" {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	err = app.models.Patients.InsertPatient(&patient)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusCreated, patient)
+func (app *application) respondWithError(w http.ResponseWriter, code int, message string) {
+	app.respondWithJSON(w, code, map[string]string{"error": message})
 }
 
-func (app *application) updatePatientHandler(w http.ResponseWriter, r *http.Request) {
-	var patient pkg.Patient
-	err := json.NewDecoder(r.Body).Decode(&patient)
+func (app *application) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, err := json.Marshal(payload)
 
 	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error1")
 		return
 	}
 
-	if patient.FirstName == "" || patient.LastName == "" {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	err = app.models.Patients.UpdatePatient(&patient)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusOK, patient)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }
 
-func (app *application) deletePatientHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["patientId"])
-
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid patient ID")
-		return
+func (app *application) readString(qs url.Values, key string, defaultValue string) string {
+	// Extract the value for a given key from the query string. If no key exists this
+	// will return the empty string "".
+	s := qs.Get(key)
+	// If no key exists (or the value is empty) then return the default value.
+	if s == "" {
+		return defaultValue
 	}
-
-	err = app.models.Patients.DeletePatient(id)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusNoContent, nil)
+	// Otherwise return the string.
+	return s
 }
 
-// Doctor Handlers
-func (app *application) getDoctorsHandler(w http.ResponseWriter, r *http.Request) {
+// The readCSV() helper reads a string value from the query string and then splits it
+// into a slice on the comma character. If no matching key could be found, it returns
+// the provided default value.
+func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
+	// Extract the value from the query string.
+	csv := qs.Get(key)
+	// If no key exists (or the value is empty) then return the default value.
+	if csv == "" {
+		return defaultValue
+	}
+	// Otherwise parse the value into a []string slice and return it.
+	return strings.Split(csv, ",")
+}
+
+// Create Registration function
+func (app *application) createRegistration(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		FirstName  string
-		SecondName string
-		pkg.Filters
-	}
-	// Initialize a new Validator instance.
-	v := validator.New()
-	// Call r.URL.Query() to get the url.Values map containing the query string data.
-	qs := r.URL.Query()
-	// Use our helpers to extract the title and genres query string values, falling back
-	// to defaults of an empty string and an empty slice respectively if they are not
-	// provided by the client.
-	input.FirstName = app.readString(qs, "firstName", "")
-	input.SecondName = app.readString(qs, "secondName", "")
-	// Get the page and page_size query string values as integers. Notice that we set
-	// the default page value to 1 and default page_size to 20, and that we pass the
-	// validator instance as the final argument here.
-	input.Filters.Page = app.readInt(qs, "page", 1, v)
-	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
-	// Extract the sort query string value, falling back to "id" if it is not provided
-	// by the client (which will imply a ascending sort on movie ID).
-	input.Filters.Sort = app.readString(qs, "sort", "doctorId")
-	input.Filters.SortSafelist = []string{"doctorId", "firstName", "secondName", "speciality", "phone", "-doctorId", "-firstName", "-secondName", "-speciality", "-phone"}
-	// Check the Validator instance for any errors and use the failedValidationResponse()
-	// helper to send the client a response if necessary.
-	if pkg.ValidateFilters(v, input.Filters); !v.Valid() {
-		//app.failedValidationResponse(w, r, v.Errors)
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-	}
-	if !v.Valid() {
-		//app.failedValidationResponse(w, r, v.Errors)
-		return
-	}
-	// Dump the contents of the input struct in a HTTP response.
-	//fmt.Fprintf(w, "%+v\n", input)
-
-	doctors, metadata, err := app.models.Doctors.GetDoctors(input.FirstName, input.SecondName, input.Filters)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-	fmt.Println(metadata)
-	app.respondWithJSON(w, http.StatusOK, doctors)
-}
-func (app *application) getDoctorHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["doctorId"])
-	fmt.Println(id)
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid doctor ID")
-		return
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Phone     string `json:"phone"`
 	}
 
-	doctor, err := app.models.Doctors.GetDoctor(id)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusNotFound, "Doctor not found")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusOK, doctor)
-}
-func (app *application) createDoctorHandler(w http.ResponseWriter, r *http.Request) {
-	var doctor pkg.Doctor
-	err := json.NewDecoder(r.Body).Decode(&doctor)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	if doctor.FirstName == "" || doctor.SecondName == "" {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	err = app.models.Doctors.InsertDoctor(&doctor)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusCreated, doctor)
-}
-
-func (app *application) updateDoctorHandler(w http.ResponseWriter, r *http.Request) {
-	var doctor pkg.Doctor
-	err := json.NewDecoder(r.Body).Decode(&doctor)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid doctor ID")
-		return
-	}
-
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	if doctor.FirstName == "" || doctor.SecondName == "" {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	err = app.models.Doctors.UpdateDoctor(&doctor)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusOK, doctor)
-}
-
-func (app *application) deleteDoctorHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["doctorId"])
-
-	if err != nil {
-		app.respondWithError(w, http.StatusBadRequest, "Invalid doctor ID")
-		return
-	}
-
-	err = app.models.Doctors.DeleteDoctor(id)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
-	}
-
-	app.respondWithJSON(w, http.StatusNoContent, nil)
-}
-
-// User Handlers
-func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request) {
-	// Create an anonymous struct to hold the expected data from the request body.
-	var input struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-	// Parse the request body into the anonymous struct.
 	err := app.readJSON(w, r, &input)
 	if err != nil {
-		//app.badRequestResponse(w, r, err)
+		log.Println(err)
+		app.errorResponse(w, r, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	// Copy the data from the request body into a new User struct. Notice also that we
-	// set the Activated field to false, which isn't strictly necessary because the
-	// Activated field will have the zero-value of false by default. But setting this
-	// explicitly helps to make our intentions clear to anyone reading the code.
 
-	user := &pkg.User{
-		Name:      input.Name,
-		Email:     input.Email,
-		Activated: false,
+	registration := &model.Patient{
+		FirstName: input.FirstName,
+		LastName:  input.LastName,
+		Phone:     input.Phone,
 	}
-	// Use the Password.Set() method to generate and store the hashed and plaintext
-	// passwords.
-	err = user.Password.Set(input.Password)
-	if err != nil {
-		//app.serverErrorResponse(w, r, err)
-		return
-	}
-	v := validator.New()
-	// Validate the user struct and return the error messages to the client if any of
-	// the checks fail.
-	if pkg.ValidateUser(v, user); !v.Valid() {
-		//app.failedValidationResponse(w, r, v.Errors)
-		return
-	}
-	// Insert the user data into the database.
-	err = app.models.Users.Insert(user)
-	if err != nil {
-		switch {
-		// If we get a ErrDuplicateEmail error, use the v.AddError() method to manually
-		// add a message to the validator instance, and then call our
-		// failedValidationResponse() helper.
-		case errors.Is(err, pkg.ErrDuplicateEmail):
-			v.AddError("email", "a user with this email address already exists")
-			//app.failedValidationResponse(w, r, v.Errors)
-		default:
-			//app.serverErrorResponse(w, r, err)
-		}
-		return
-	}
-	err = app.models.Permissions.AddForUser(user.ID, "doctor.read")
+
+	err = app.models.Patients.Insert(registration)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	// Write a JSON response containing the user data along with a 201 Created status
-	// code.
-	token, err := app.models.Tokens.New(user.ID, 3*24*time.Hour, pkg.ScopeActivation)
-	if err != nil {
-		//app.serverErrorResponse(w, r, err)
-		return
-	}
-	var res struct {
-		Token *string   `json:"token"`
-		User  *pkg.User `json:"user"`
-	}
-
-	res.Token = &token.Plaintext
-	res.User = user
-
-	err = app.writeJSON(w, http.StatusCreated, envelope{"user": res}, nil)
-	if err != nil {
-		//app.serverErrorResponse(w, r, err)
-	}
-
+	app.writeJSON(w, http.StatusCreated, envelope{"registration": registration}, nil)
 }
 
-func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse the plaintext activation token from the request body.
+// Get Registrations of the specific surgeon | function
+func (app *application) getRegistration(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	param := vars["registrationId"]
+
+	id, err := strconv.Atoi(param)
+	if err != nil || id < 1 {
+		app.respondWithError(w, http.StatusBadRequest, "There is no such registrations, try another Registration id")
+		return
+	}
+
+	registration, err := app.models.Patients.Get(id)
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, registration)
+}
+
+func (app *application) getSortedRegistrations(w http.ResponseWriter, r *http.Request) {
+
+	sortParam := r.URL.Query().Get("sort")
+	sortDirection := r.URL.Query().Get("sort_direction")
+
+	if sortDirection != "DESC" {
+		sortDirection = "ASC"
+	}
+
+	filters := model.Filters{
+		Sort:          sortParam,
+		SortDirection: sortDirection,
+		SortSafelist:  []string{"first_name", "last_name", "id", "-first_name", "-last_name", "-id"}, // Add any safe sorting criteria
+	}
+
+	// Call GetAllSortedByName method from the PatientModel instance
+	registrations, err := app.models.Patients.GetAllSortedByName(filters)
+	if err != nil {
+		app.respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	// Marshal registrations into JSON format
+	jsonRegistrations, err := json.Marshal(registrations)
+	if err != nil {
+		app.respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	// Set content type header
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write JSON response
+	w.Write(jsonRegistrations)
+}
+
+func (app *application) getFilteredRegistrations(w http.ResponseWriter, r *http.Request) {
+
+	filterParam := r.URL.Query().Get("filter")
+
+	filtered_registrations, err := app.models.Patients.GetFilteredByText(filterParam)
+
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, filtered_registrations)
+}
+
+func (app *application) getPaginatedRegistrations(w http.ResponseWriter, r *http.Request) {
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 {
+		app.respondWithError(w, http.StatusBadRequest, "Invalid limit data")
+		return
+	}
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		app.respondWithError(w, http.StatusBadRequest, "Invalid offset data")
+		return
+	}
+
+	patients, err := app.models.Patients.GetPaginatedPatients(limit, offset)
+
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, patients)
+}
+
+func (app *application) updateRegistration(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	param := vars["registrationId"]
+
+	id, err := strconv.Atoi(param)
+	if err != nil || id < 1 {
+		app.respondWithError(w, http.StatusBadRequest, "Invalid registration Id written, try another")
+		return
+	}
+
+	registration, err := app.models.Patients.Get(id)
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
 	var input struct {
-		TokenPlaintext string `json:"token"`
+		FirstName *string `json:"first_name"`
+		LastName  *string `json:"last_name"`
+		Phone     *string `json:"phone"`
 	}
-	err := app.readJSON(w, r, &input)
+
+	err = app.readJSON(w, r, &input)
 	if err != nil {
-		//app.badRequestResponse(w, r, err)
+		app.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	// Validate the plaintext token provided by the client.
-	v := validator.New()
-	if pkg.ValidateTokenPlaintext(v, input.TokenPlaintext); !v.Valid() {
-		//app.failedValidationResponse(w, r, v.Errors)
+
+	if input.FirstName != nil {
+		registration.FirstName = *input.FirstName
+	}
+
+	if input.LastName != nil {
+		registration.LastName = *input.LastName
+	}
+
+	if input.Phone != nil {
+		registration.Phone = *input.Phone
+	}
+
+	err = app.models.Patients.Update(registration)
+	if err != nil {
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error3")
 		return
 	}
-	// Retrieve the details of the user associated with the token using the
-	// GetForToken() method (which we will create in a minute). If no matching record
-	// is found, then we let the client know that the token they provided is not valid.
-	user, err := app.models.Users.GetForToken(pkg.ScopeActivation, input.TokenPlaintext)
-	if err != nil {
-		switch {
-		case errors.Is(err, err):
-			v.AddError("token", "invalid or expired activation token")
-			//app.failedValidationResponse(w, r, v.Errors)
-		default:
-			//app.serverErrorResponse(w, r, err)
-		}
+
+	app.respondWithJSON(w, http.StatusOK, registration)
+}
+
+func (app *application) deleteRegistration(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	param := vars["registrationId"]
+
+	id, err := strconv.Atoi(param)
+	if err != nil || id < 1 {
+		app.respondWithError(w, http.StatusBadRequest, "There is no such registrations with that Id")
 		return
 	}
-	// Update the user's activation status.
-	user.Activated = true
-	// Save the updated user record in our database, checking for any edit conflicts in
-	// the same way that we did for our movie records.
-	err = app.models.Users.Update(user)
+
+	err = app.models.Patients.Delete(id)
 	if err != nil {
-		switch {
-		case errors.Is(err, err):
-			//app.editConflictResponse(w, r)
-		default:
-			//app.serverErrorResponse(w, r, err)
-		}
+		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error4")
 		return
 	}
-	// If everything went successfully, then we delete all activation tokens for the
-	// user.
-	err = app.models.Tokens.DeleteAllForUser(pkg.ScopeActivation, user.ID)
-	if err != nil {
-		//app.serverErrorResponse(w, r, err)
-		return
-	}
-	// Send the updated user details to the client in a JSON response.
-	err = app.writeJSON(w, http.StatusOK, envelope{"user": user}, nil)
-	if err != nil {
-		//app.serverErrorResponse(w, r, err)
-	}
+
+	app.respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }

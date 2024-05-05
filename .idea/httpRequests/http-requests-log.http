@@ -1,0 +1,679 @@
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T025112.200.json
+
+###
+
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T025105.200.json
+
+###
+
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T022407.200.json
+
+###
+
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T022132.200.json
+
+###
+
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T022023.404.json
+
+###
+
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T021925.404.json
+
+###
+
+PUT http://localhost:8080/api/v1/registrations/1
+Content-Type: application/json
+Content-Length: 23
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "phone": "336228"
+}
+
+<> 2024-05-05T020812.404.json
+
+###
+
+GET http://localhost:8080/api/v1/registrations/sorting?sort=id
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T020804.200.json
+
+###
+
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-05T020755.404.json
+
+###
+
+PUT http://localhost:8080/api/v1/users/activated
+Content-Type: application/json
+Content-Length: 81
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "token": "0B15996786302EA936C644D6DDD9D7B1DC1756FA4457C8A151DEFBF42C947948"
+}
+
+<> 2024-05-05T004420.422.json
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 77
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "12345678"
+}
+
+<> 2024-05-05T000317.201.json
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+<> 2024-05-05T000250.422.json
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+GET http://localhost:8080/api/v1/registrations/3
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-04T221228.200.json
+
+###
+
+POST http://localhost:8080/api/v1/creation
+Content-Type: application/json
+Content-Length: 74
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "first_name": "Mohammed",
+  "last_name": "Salah",
+  "phon": "228336"
+}
+
+<> 2024-05-04T220927.400.json
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/creation
+Content-Type: application/json
+Content-Length: 75
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "first_name": "Mohammed",
+  "last_name": "Salah",
+  "phone": "228336"
+}
+
+<> 2024-05-04T220822.201.json
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234abc"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/creation
+Content-Type: application/json
+Content-Length: 75
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "first_name": "Mohammed",
+  "last_name": "Salah",
+  "phone": "228336"
+}
+
+<> 2024-05-04T201253.201.json
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:8080/api/v1/creation
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+<> 2024-05-04T200049.400.json
+
+###
+
+POST http://localhost:8080/api/v1/creation
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+<> 2024-05-04T200024.400.json
+
+###
+
+POST http://localhost:8081/api/v1/users/activated
+Content-Type: application/json
+Content-Length: 72
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Beks",
+  "email": "beks@gmail.com",
+  "phone": "pa55word"
+}
+
+<> 2024-05-04T061215.404.json
+
+###
+
+DELETE http://localhost:8081/api/v1/registrations/3
+Content-Type: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-04T060018.404.json
+
+###
+
+GET http://localhost:8081/api/v1/registrations?filter=Zh
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-04T060005.404.json
+
+###
+
+POST http://localhost:8081/api/v1/users
+Content-Type: application/json
+Content-Length: 72
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Beks",
+  "email": "beks@gmail.com",
+  "phone": "pa55word"
+}
+
+###
+
+GET http://localhost:8081/api/v1/registrations?filter=Zh
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-04T054947.404.json
+
+###
+
+GET http://localhost:8081/api/v1/registrations/sorting?sort=id
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-04T054944.404.json
+
+###
+
+PUT http://localhost:8081/api/v1/registrations/1
+Content-Type: application/json
+Content-Length: 23
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "phone": "336228"
+}
+
+<> 2024-05-04T054930.404.json
+
+###
+
+GET http://localhost:8081/api/v1/registrations/sorting?sort=id
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-04T054858.404.json
+
+###
+
+GET http://localhost:8081/api/v1/doctors/1
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-05-04T054843.200.json
+
+###
+
+POST http://localhost:8081/api/v1/users
+Content-Type: application/json
+Content-Length: 72
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Beks",
+  "email": "beks@gmail.com",
+  "phone": "pa55word"
+}
+
+###
+
+POST http://localhost:8081/api/v1/users
+Content-Type: application/json
+Content-Length: 72
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Beks",
+  "email": "beks@gmail.com",
+  "phone": "pa55word"
+}
+
+###
+
+POST http://localhost:8080/api/v1/creation
+Content-Type: application/json
+Content-Length: 73
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "1234"
+}
+
+<> 2024-05-04T025809.400.json
+
+###
+

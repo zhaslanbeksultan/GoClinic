@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/validator"
+	"GoClinic/pkg/web/model"
+	"GoClinic/pkg/web/validator"
 )
 
 func (app *application) authenticate(next http.Handler) http.Handler {
@@ -38,13 +38,13 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		// Extract the actual authentication toekn from the header parts
+		// Extract the actual authentication token from the header parts
 		token := headerParts[1]
 
 		// Validate the token to make sure it is in a sensible format.
 		v := validator.New()
 
-		// If the token isn't valid, use the invalidAuthenticationtokenResponse
+		// If the token isn't valid, use the invalid Authentication token Response
 		// helper to send a response, rather than the failedValidatedResponse helper.
 		if model.ValidateTokenPlaintext(v, token); !v.Valid() {
 			app.invalidAuthenticationTokenResponse(w, r)

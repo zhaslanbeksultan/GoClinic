@@ -1,11 +1,45 @@
-###Create Doctor
-POST localhost:8081/api/v1/doctors
+###User Registration
+POST localhost:8080/api/v1/users
 Content-Type: application/json
 
 {
-  "firsName": "Beks",
-  "lastName": "Zhaslan",
-  "speciality": "dentist",
+  "name": "Aidar",
+  "email": "aidar@gmail.com",
+  "password": "12345678"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+###User Activation
+PUT localhost:8080/api/v1/users/activated
+Content-Type: application/json
+
+{
+  "token": "0B15996786302EA936C644D6DDD9D7B1DC1756FA4457C8A151DEFBF42C947948"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
+
+
+###Patients' APIs
+
+###Create Registration of the Patient
+POST localhost:8080/api/v1/creation
+Content-Type: application/json
+
+{
+  "first_name": "Mohammed",
+  "last_name": "Salah",
   "phone": "228336"
 }
 
@@ -15,25 +49,10 @@ Content-Type: application/json
     });
 %}
 
-###Create User
-POST localhost:8081/api/v1/users
-Content-Type: application/json
-
-{
-  "name": "Beks",
-  "email": "beks@gmail.com",
-  "phone": "pa55word"
-}
-
-> {%
-    client.test("Request executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-%}
 
 
-### Get Doctor with id=1
-GET localhost:8080/api/v1/doctors/1
+### Get Patient with id=12
+GET localhost:8080/api/v1/registrations/3
 
 > {%
     client.test("Request executed successfully", function() {
@@ -85,11 +104,11 @@ Content-Type: application/json
 
 
 ### Delete Registration from Database
-DELETE localhost:8080/api/v1/registrations/3
+DELETE localhost:8080/api/v1/registrations/1
 Content-Type: application/json
 
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
     });
-%}
+%}%}

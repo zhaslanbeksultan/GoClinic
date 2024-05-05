@@ -1,30 +1,22 @@
 package main
 
 import (
+	"GoClinic/pkg/web/jsonlog"
+	"GoClinic/pkg/web/model"
 	"database/sql"
 	"flag"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/peterbourgon/ff/v3"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/jsonlog"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/vcs"
-	pkg "github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model/filler"
 	"os"
 	"sync"
-)
-
-var (
-	version = vcs.Version()
 )
 
 type config struct {
 	port       int
 	env        string
-	fill       bool
 	migrations string
 	db         struct {
 		dsn string
@@ -33,7 +25,7 @@ type config struct {
 
 type application struct {
 	config config
-	models pkg.Models
+	models model.Models
 	logger *jsonlog.Logger
 	wg     sync.WaitGroup
 }
@@ -43,13 +35,12 @@ func main() {
 
 	var (
 		cfg        config
-		fill       = fs.Bool("fill", false, "Fill database with dummy data")
-		migrations = fs.String("migrations", "", "Path to migration files folder. If not provided, migrations do not applied")
-		port       = fs.Int("port", 8081, "API server port")
+		migrations = fs.String("migrations", "", "file://pkg/web/migrations")
+		port       = fs.Int("port", 8080, "API server port")
 		env        = fs.String("env", "development", "Environment (development|staging|production)")
-		dbDsn      = fs.String("dsn", "postgres://postgres:$F00tba11@localhost:5432/postgres?sslmode=disable", "PostgreSQL DSN")
+		dbDsn      = fs.String("dsn", "postgres://postgres:1234@postgres:5432/postgres?sslmode=disable", "PostgreSQL DSN")
 	)
-
+	//postgres://localhost:5432/postgres?sslmode=disable
 	// Init logger
 	logger := jsonlog.NewLogger(os.Stdout, jsonlog.LevelInfo)
 
@@ -60,13 +51,11 @@ func main() {
 
 	cfg.port = *port
 	cfg.env = *env
-	cfg.fill = *fill
 	cfg.db.dsn = *dbDsn
 	cfg.migrations = *migrations
 
 	logger.PrintInfo("starting application with configuration", map[string]string{
 		"port":       fmt.Sprintf("%d", cfg.port),
-		"fill":       fmt.Sprintf("%t", cfg.fill),
 		"env":        cfg.env,
 		"db":         cfg.db.dsn,
 		"migrations": cfg.migrations,
@@ -88,16 +77,8 @@ func main() {
 
 	app := &application{
 		config: cfg,
-		models: pkg.NewModels(db),
+		models: model.NewModels(db),
 		logger: logger,
-	}
-
-	if cfg.fill {
-		err = filler.PopulateDatabase(app.models)
-		if err != nil {
-			logger.PrintFatal(err, nil)
-			return
-		}
 	}
 
 	// Call app.server() to start the server.

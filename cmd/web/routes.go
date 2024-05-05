@@ -17,22 +17,22 @@ func (app *application) routes() http.Handler {
 	// error handler for 405 Method Not Allowed responses
 	r.MethodNotAllowedHandler = http.HandlerFunc(app.methodNotAllowedResponse)
 
-	// healthcheck
-	r.HandleFunc("/api/v1/healthcheck", app.healthcheckHandler).Methods("GET")
+	v1 := r.PathPrefix("/api/v1").Subrouter()
 
-	menu1 := r.PathPrefix("/api/v1").Subrouter()
-
-	// Menu Singleton
-	// localhost:8081/api/v1/menus
-	menu1.HandleFunc("/doctors", app.getDoctorsHandler).Methods("GET")
 	// Create a new menu
-	menu1.HandleFunc("/doctors", app.createDoctorHandler).Methods("POST")
-	// Get a specific menu
-	menu1.HandleFunc("/doctors/{id:[0-9]+}", app.getDoctorHandler).Methods("GET")
-	// Update a specific menu
-	menu1.HandleFunc("/doctors/{id:[0-9]+}", app.updateDoctorHandler).Methods("PUT")
-	// Delete a specific menu
-	menu1.HandleFunc("/doctors/{id:[0-9]+}", app.requirePermissions("menus:write", app.deleteDoctorHandler)).Methods("DELETE")
+	v1.HandleFunc("/creation", app.requireActivatedUser(app.createRegistration)).Methods("POST")
+	// Get a specific patient
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.requireActivatedUser(app.getRegistration)).Methods("GET")
+	// Update a specific patient
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.requireActivatedUser(app.updateRegistration)).Methods("PUT")
+	// // Delete a specific patient
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.requirePermissions("patient.delete", app.deleteRegistration)).Methods("DELETE")
+	// Get sorted patients list
+	v1.HandleFunc("/registrations/sorting", app.requireActivatedUser(app.getSortedRegistrations)).Methods("GET")
+	// Get filtered patients list
+	v1.HandleFunc("/registrations", app.requireActivatedUser(app.getFilteredRegistrations)).Methods("GET")
+	// Get paginated patients list
+	v1.HandleFunc("/registrations/paginated", app.requireActivatedUser(app.getPaginatedRegistrations)).Methods("GET")
 
 	users1 := r.PathPrefix("/api/v1").Subrouter()
 	// User handlers with Authentication

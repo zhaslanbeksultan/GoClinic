@@ -10,75 +10,63 @@ import (
 	"strconv"
 	"strings"
 
-	pkg "github.com/zhaslanbeksultan/GoClinic/pkg/web/validator"
+	"GoClinic/pkg/web/validator"
+	"github.com/gorilla/mux"
 )
 
+// Define an envelope type.
 type envelope map[string]interface{}
 
-func (app *application) respondWithError(w http.ResponseWriter, code int, message string) {
-	app.respondWithJSON(w, code, map[string]string{"error": message})
-}
+// readIDParam reads interpolated "id" from request URL and returns it and nil. If there is an error
+// it returns and 0 and an error.
+func (app *application) readIDParam(r *http.Request) (int, error) {
+	vars := mux.Vars(r)
+	param := vars["id"]
 
-func (app *application) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, err := json.Marshal(payload)
-
-	if err != nil {
-		app.respondWithError(w, http.StatusInternalServerError, "500 Internal Server Error")
-		return
+	id, err := strconv.Atoi(param)
+	if err != nil || id < 1 {
+		return 0, errors.New("invalid id parameter")
 	}
 
+	return id, nil
+}
+
+// writeJSON marshals data structure to encoded JSON response. It returns an error if there are
+// any issues, else error is nil.
+func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope,
+	headers http.Header) error {
+	// Use the json.MarshalIndent() function so that whitespace is added to the encoded JSON. Use
+	// no line prefix and tab indents for each element.
+	js, err := json.MarshalIndent(data, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	// Append a newline to make it easier to view in terminal applications.
+	js = append(js, '\n')
+
+	// At this point, we know that we won't encounter any more errors before writing the response,
+	// so it's safe to add any headers that we want to include. We loop through the header map
+	// and add each header to the http.ResponseWriter header map. Note that it's OK if the
+	// provided header map is nil. Go doesn't through an error if you try to range over (
+	// or generally, read from) a nil map
+	for key, value := range headers {
+		w.Header()[key] = value
+	}
+
+	// Add the "Content-Type: application/json" header, then write the status code and JSON response.
 	w.Header().Set("Content-Type", "application/json")
-	//w.WriteHeader(code)
-	w.Write(response)
-}
-func (app *application) readString(qs url.Values, key string, defaultValue string) string {
-	// Extract the value for a given key from the query string. If no key exists this
-	// will return the empty string "".
-	s := qs.Get(key)
-	// If no key exists (or the value is empty) then return the default value.
-	if s == "" {
-		return defaultValue
+	w.WriteHeader(status)
+	if _, err := w.Write(js); err != nil {
+		app.logger.PrintError(err, nil)
+		return err
 	}
-	// Otherwise return the string.
-	return s
+
+	return nil
 }
 
-// The readCSV() helper reads a string value from the query string and then splits it
-// into a slice on the comma character. If no matching key could be found, it returns
-// the provided default value.
-func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
-	// Extract the value from the query string.
-	csv := qs.Get(key)
-	// If no key exists (or the value is empty) then return the default value.
-	if csv == "" {
-		return defaultValue
-	}
-	// Otherwise parse the value into a []string slice and return it.
-	return strings.Split(csv, ",")
-}
-
-// The readInt() helper reads a string value from the query string and converts it to an
-// integer before returning. If no matching key could be found it returns the provided
-// default value. If the value couldn't be converted to an integer, then we record an
-// error message in the provided Validator instance.
-func (app *application) readInt(qs url.Values, key string, defaultValue int, v *pkg.Validator) int {
-	// Extract the value from the query string.
-	s := qs.Get(key)
-	// If no key exists (or the value is empty) then return the default value.
-	if s == "" {
-		return defaultValue
-	}
-	// Try to convert the value to an int. If this fails, add an error message to the
-	// validator instance and return the default value.
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		v.AddError(key, "must be an integer value")
-		return defaultValue
-	}
-	// Otherwise, return the converted integer value.
-	return i
-}
-
+// readJSON decodes request Body into corresponding Go type. It triages for any potential errors
+// and returns corresponding appropriate errors.
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 	// Use http.MaxBytesReader() to limit the size of the request body to 1MB to prevent
 	// any potential nefarious DoS attacks.
@@ -172,34 +160,44 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst int
 
 	return nil
 }
-func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope,
-	headers http.Header) error {
-	// Use the json.MarshalIndent() function so that whitespace is added to the encoded JSON. Use
-	// no line prefix and tab indents for each element.
-	js, err := json.MarshalIndent(data, "", "\t")
+
+// readStrings is a helper method on application type that returns a string value from the URL query
+// string, or the provided default value if no matching key is found.
+func (app *application) readStrings(qs url.Values, key string, defaultValue string) string {
+	// Extract the value for a given key from the URL query string.
+	// If no key exists this will return an empty string "".
+	s := qs.Get(key)
+
+	// If no key exists (or the value is empty) then return the default value
+	if s == "" {
+		return defaultValue
+	}
+
+	// Otherwise, return the string
+	return s
+}
+
+// readInt is a helper method on application type that reads a string value from the URL query
+// string and converts it to an integer before returning. If no matching key is found then it
+// returns the provided default value. If the value couldn't be converted to an integer, then we
+// record an error message in the provided Validator instance, and return the default value.
+func (app *application) readInt(qs url.Values, key string, defaultValue int, v *validator.Validator) int {
+	// Extract the value from the URL query string.
+	s := qs.Get(key)
+
+	// If no key exists (or the value is empty) then return the default value.
+	if s == "" {
+		return defaultValue
+	}
+
+	// Try to convert the string value to an int. If this fails, add an error message to the
+	// validator instance and return the default value.
+	i, err := strconv.Atoi(s)
 	if err != nil {
-		return err
+		v.AddError(key, "must be an integer value")
+		return defaultValue
 	}
 
-	// Append a newline to make it easier to view in terminal applications.
-	js = append(js, '\n')
-
-	// At this point, we know that we won't encounter any more errors before writing the response,
-	// so it's safe to add any headers that we want to include. We loop through the header map
-	// and add each header to the http.ResponseWriter header map. Note that it's OK if the
-	// provided header map is nil. Go doesn't through an error if you try to range over (
-	// or generally, read from) a nil map
-	for key, value := range headers {
-		w.Header()[key] = value
-	}
-
-	// Add the "Content-Type: application/json" header, then write the status code and JSON response.
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	if _, err := w.Write(js); err != nil {
-		//app.logger.PrintError(err, nil)
-		return err
-	}
-
-	return nil
+	// Otherwise, return the converted integer value.
+	return i
 }

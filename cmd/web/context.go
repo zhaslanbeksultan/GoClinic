@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
+	"GoClinic/pkg/web/model"
 )
 
 type contextKey string

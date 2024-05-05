@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/validator"
+	"GoClinic/pkg/web/validator"
 )
 
 // ScopeActivation defines the "activate" scope for scope in the tokens table.

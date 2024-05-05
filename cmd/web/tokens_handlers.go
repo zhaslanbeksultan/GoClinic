@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/model"
-	"github.com/zhaslanbeksultan/GoClinic/pkg/web/validator"
+	"GoClinic/pkg/web/model"
+	"GoClinic/pkg/web/validator"
 )
 
 func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +63,7 @@ func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, 
 
 	// Otherwise, if the password is correct, we generate a new token with a 24-hour expiry time
 	// and the scope 'authentication'.
-	token, err := app.models.Tokens.New(user.ID, 24*time.Hour, model.ScopeAuthentication)
+	token, err := app.models.Tokens.New(user.ID, 12*time.Hour, model.ScopeAuthentication)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
