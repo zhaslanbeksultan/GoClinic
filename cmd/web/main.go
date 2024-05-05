@@ -6,8 +6,6 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/lib/pq"
 	"github.com/peterbourgon/ff/v3"
 	"os"
@@ -41,6 +39,7 @@ func main() {
 		dbDsn      = fs.String("dsn", "postgres://postgres:1234@postgres:5432/postgres?sslmode=disable", "PostgreSQL DSN")
 	)
 	//postgres://localhost:5432/postgres?sslmode=disable
+	//postgres://postgres:1234@postgres:5432/postgres?sslmode=disable
 	// Init logger
 	logger := jsonlog.NewLogger(os.Stdout, jsonlog.LevelInfo)
 
@@ -75,6 +74,10 @@ func main() {
 		}
 	}()
 
+	// Migrations
+	migrationDown(db)
+	migrationUp(db)
+
 	app := &application{
 		config: cfg,
 		models: model.NewModels(db),
@@ -88,30 +91,35 @@ func main() {
 }
 
 func openDB(cfg config) (*sql.DB, error) {
-	// Use sql.Open() to create an empty connection pool, using the DSN from the config // struct.
 	db, err := sql.Open("postgres", cfg.db.dsn)
 	if err != nil {
 		return nil, err
 	}
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	// https://github.com/golang-migrate/migrate?tab=readme-ov-file#use-in-your-go-project
-	if cfg.migrations != "" {
-		driver, err := postgres.WithInstance(db, &postgres.Config{})
-		if err != nil {
-			return nil, err
-		}
-		m, err := migrate.NewWithDatabaseInstance(
-			cfg.migrations,
-			"postgres", driver)
-		if err != nil {
-			return nil, err
-		}
-		m.Up()
-	}
-
 	return db, nil
+	//// Use sql.Open() to create an empty connection pool, using the DSN from the config // struct.
+	//db, err := sql.Open("postgres", cfg.db.dsn)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//err = db.Ping()
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//// https://github.com/golang-migrate/migrate?tab=readme-ov-file#use-in-your-go-project
+	//if cfg.migrations != "" {
+	//	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	m, err := migrate.NewWithDatabaseInstance(
+	//		"file://pkg/web/migrations",
+	//		"postgres", driver)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	m.Up()
+	//}
+	//
+	//return db, nil
 }
