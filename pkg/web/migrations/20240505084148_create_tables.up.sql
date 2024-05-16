@@ -67,4 +67,12 @@ VALUES
     ('patient.create'),
     ('patient.read'),
     ('patient.update'),
-    ('patient.delete');
+    ('patient.delete'),
+    ('doctor.create'),
+    ('doctor.read'),
+    ('doctor.update'),
+    ('doctor.delete'),
+    ('appointment.create'),
+    ('appointment.read'),
+    ('appointment.update'),
+    ('appointment.delete');

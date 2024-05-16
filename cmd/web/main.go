@@ -36,7 +36,7 @@ func main() {
 		migrations = fs.String("migrations", "", "file://pkg/web/migrations")
 		port       = fs.Int("port", 8080, "API server port")
 		env        = fs.String("env", "development", "Environment (development|staging|production)")
-		dbDsn      = fs.String("dsn", "postgres://postgres:$F00tba11@localhost:5432/postgres?sslmode=disable", "PostgreSQL DSN")
+		dbDsn      = fs.String("dsn", "postgres://postgres:1234@postgres:5432/postgres?sslmode=disable", "PostgreSQL DSN")
 	)
 	//postgres://localhost:5432/postgres?sslmode=disable
 	//postgres://postgres:1234@postgres:5432/postgres?sslmode=disable
@@ -75,8 +75,8 @@ func main() {
 	}()
 
 	// Migrations
-	//migrationDown(db)
-	//migrationUp(db)
+	migrationDown(db)
+	migrationUp(db)
 
 	app := &application{
 		config: cfg,
