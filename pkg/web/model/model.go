@@ -7,10 +7,12 @@ import (
 )
 
 type Models struct {
-	Patients    PatientModel
-	Users       UserModel
-	Tokens      TokenModel
-	Permissions PermissionModel
+	Patients     PatientModel
+	Doctors      DoctorModel
+	Appointments AppointmentModel
+	Users        UserModel
+	Tokens       TokenModel
+	Permissions  PermissionModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -18,6 +20,16 @@ func NewModels(db *sql.DB) Models {
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	return Models{
 		Patients: PatientModel{
+			DB:       db,
+			InfoLog:  infoLog,
+			ErrorLog: errorLog,
+		},
+		Doctors: DoctorModel{
+			DB:       db,
+			InfoLog:  infoLog,
+			ErrorLog: errorLog,
+		},
+		Appointments: AppointmentModel{
 			DB:       db,
 			InfoLog:  infoLog,
 			ErrorLog: errorLog,

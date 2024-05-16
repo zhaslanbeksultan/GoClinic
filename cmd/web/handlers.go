@@ -246,3 +246,5 @@ func (app *application) deleteRegistration(w http.ResponseWriter, r *http.Reques
 
 	app.respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
