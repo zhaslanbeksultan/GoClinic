@@ -26,7 +26,7 @@ func (app *application) routes() http.Handler {
 	// Update a specific patient
 	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.requireActivatedUser(app.updateRegistration)).Methods("PUT")
 	// // Delete a specific patient
-	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.requirePermissions("patient.delete", app.deleteRegistration)).Methods("DELETE")
+	v1.HandleFunc("/registrations/{registrationId:[0-9]+}", app.requireActivatedUser(app.deleteRegistration)).Methods("DELETE")
 	// Get sorted patients list
 	v1.HandleFunc("/registrations/sorting", app.requireActivatedUser(app.getSortedRegistrations)).Methods("GET")
 	// Get filtered patients list
@@ -43,7 +43,7 @@ func (app *application) routes() http.Handler {
 	// Update a specific doctor
 	v2.HandleFunc("/doctors/{doctorId:[0-9]+}", app.requireActivatedUser(app.updateDoctor)).Methods("PUT")
 	// // Delete a specific doctor
-	v2.HandleFunc("/doctors/{doctorId:[0-9]+}", app.requirePermissions("doctor.delete", app.deleteDoctor)).Methods("DELETE")
+	v2.HandleFunc("/doctors/{doctorId:[0-9]+}", app.requireActivatedUser(app.deleteDoctor)).Methods("DELETE")
 	// Get sorted doctors list
 	v2.HandleFunc("/doctors/sorting", app.requireActivatedUser(app.getSortedDoctors)).Methods("GET")
 	// Get filtered doctors list
@@ -62,9 +62,9 @@ func (app *application) routes() http.Handler {
 	// Update a specific appointment
 	v3.HandleFunc("/appointments/{appointmentId:[0-9]+}", app.requireActivatedUser(app.updateAppointment)).Methods("PUT")
 	// Delete a specific appointment
-	v3.HandleFunc("/appointments/{appointmentsId:[0-9]+}", app.requirePermissions("appointment.delete", app.deleteAppointment)).Methods("DELETE")
+	v3.HandleFunc("/appointments/{appointmentsId:[0-9]+}", app.requireActivatedUser(app.deleteAppointment)).Methods("DELETE")
 	// Get sorted doctors list
-	v2.HandleFunc("/appointments/sorting", app.requireActivatedUser(app.getSortedAppointments)).Methods("GET")
+	v3.HandleFunc("/appointments/sorting", app.requireActivatedUser(app.getSortedAppointments)).Methods("GET")
 	// Get paginated appointments list
 	v3.HandleFunc("/appointments/paginated", app.requireActivatedUser(app.getPaginatedAppointments)).Methods("GET")
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
