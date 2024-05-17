@@ -134,6 +134,44 @@ func (app *application) getPaginatedAppointments(w http.ResponseWriter, r *http.
 	app.respondWithJSON(w, http.StatusOK, appointments)
 }
 
+func (app *application) getAppointmentsOfDoctor(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	param := vars["doctorId"]
+
+	id, err := strconv.Atoi(param)
+	if err != nil || id < 1 {
+		app.respondWithError(w, http.StatusBadRequest, "There is no such appointments, try another Doctor id")
+		return
+	}
+
+	appointments, err := app.models.Appointments.Get_By_Doctor(id)
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, appointments)
+}
+
+func (app *application) getAppointmentsOfPatient(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	param := vars["patientId"]
+
+	id, err := strconv.Atoi(param)
+	if err != nil || id < 1 {
+		app.respondWithError(w, http.StatusBadRequest, "There is no such appointments, try another Patient id")
+		return
+	}
+
+	appointments, err := app.models.Appointments.Get_By_Patient(id)
+	if err != nil {
+		app.respondWithError(w, http.StatusNotFound, "404 Not Found")
+		return
+	}
+
+	app.respondWithJSON(w, http.StatusOK, appointments)
+}
+
 func (app *application) updateAppointment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["appointmentId"]

@@ -186,3 +186,67 @@ func (m AppointmentModel) GetPaginatedAppointments(limit, offset int) ([]*Appoin
 
 	return appointments, nil
 }
+
+func (m AppointmentModel) Get_By_Doctor(id int) ([]*Appointment, error) {
+	query := `
+       SELECT id, created_at, updated_at, date_time, doctor_id, patient_id
+       FROM appointments
+       WHERE doctor_id = $1
+       ORDER BY date_time
+   `
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var appointments []*Appointment
+	for rows.Next() {
+		var appointment Appointment
+		if err := rows.Scan(&appointment.Id, &appointment.CreatedAt, &appointment.UpdatedAt, &appointment.DateTime, &appointment.DoctorID, &appointment.PatientID); err != nil {
+			return nil, err
+		}
+		appointments = append(appointments, &appointment)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return appointments, nil
+}
+
+func (m AppointmentModel) Get_By_Patient(id int) ([]*Appointment, error) {
+	query := `
+       SELECT id, created_at, updated_at, date_time, doctor_id, patient_id
+       FROM appointments
+       WHERE patient_id = $1
+       ORDER BY date_time
+   `
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var appointments []*Appointment
+	for rows.Next() {
+		var appointment Appointment
+		if err := rows.Scan(&appointment.Id, &appointment.CreatedAt, &appointment.UpdatedAt, &appointment.DateTime, &appointment.DoctorID, &appointment.PatientID); err != nil {
+			return nil, err
+		}
+		appointments = append(appointments, &appointment)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return appointments, nil
+}
