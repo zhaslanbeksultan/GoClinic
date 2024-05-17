@@ -33,6 +33,8 @@ func (app *application) routes() http.Handler {
 	v1.HandleFunc("/registrations", app.requireActivatedUser(app.getFilteredRegistrations)).Methods("GET")
 	// Get paginated patients list
 	v1.HandleFunc("/registrations/paginated", app.requireActivatedUser(app.getPaginatedRegistrations)).Methods("GET")
+	//Get patient's appointments
+	v1.HandleFunc("/patient/{patientId:[0-9]+}/appointments", app.requireActivatedUser(app.getAppointmentsOfPatient)).Methods("GET")
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	v2 := r.PathPrefix("/api/v1").Subrouter()
 
@@ -50,6 +52,8 @@ func (app *application) routes() http.Handler {
 	v2.HandleFunc("/doctors", app.requireActivatedUser(app.getFilteredDoctors)).Methods("GET")
 	// Get paginated doctors list
 	v2.HandleFunc("/doctors/paginated", app.requireActivatedUser(app.getPaginatedDoctors)).Methods("GET")
+	//Get doctor's appointments
+	v1.HandleFunc("/doctor/{doctorId:[0-9]+}/appointments", app.requireActivatedUser(app.getAppointmentsOfDoctor)).Methods("GET")
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	v3 := r.PathPrefix("/api/v1").Subrouter()
 

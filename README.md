@@ -1,7 +1,7 @@
 # GoClinic Project  
 ## Project Description  
 This project is a web-based appointment scheduling system that facilitates the process of scheduling appointments between patients and doctors. It provides an efficient and convenient way for patients to book appointments with their healthcare providers, reducing wait times and improving overall scheduling efficiency.
-## Restaurants REST API  
+## Clinic REST API  
 &nbsp;POST /creation  
 &nbsp;GET /registrations/:id  
 &nbsp;PUT /registrations/:id  
